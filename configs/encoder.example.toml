@@ -1,0 +1,9 @@
+# Optional extra: pip install -e ".[encoder]"
+# The encoder is actually loaded and frozen. Supply an immutable model revision
+# (prefer a full commit hash) or an audited local checkpoint with pinned revision.
+# This template is deliberately not enabled in the development configuration.
+[encoder]
+model_name = "sentence-transformers/all-MiniLM-L6-v2"
+revision = "REPLACE_WITH_AUDITED_IMMUTABLE_REVISION"
+device = "cpu"
+max_sequence_length = 512

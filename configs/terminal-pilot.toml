@@ -1,0 +1,75 @@
+# First real natural-trajectory pilot. These six candidate tasks are NOT
+# automatically certified and are NOT enough to train/calibrate five splits.
+# Expand the preregistered source/target cohort BEFORE starting a training study.
+[study]
+study_id = "terminal-bench-2-fs-pilot-v1"
+base_seed = 42
+replicates = 2
+max_steps = 30
+max_model_calls = 30
+budget_mode = "continuation"
+reminder_probability = 0.5
+lambda_inference = 0.01
+lambda_tool = 0.0
+inference_weights = { model_calls = 1.0 }
+tool_weights = { tool_calls = 1.0 }
+risk_budget = 0.05
+compute_budget = 2.0
+kl_weight = 0.01
+
+[provider]
+# Match the immutable-revision server command in README.md.
+model = "qwen2.5-7b-a09a35458c70"
+base_url = "http://127.0.0.1:8000/v1"
+api_key_env = "CAVE_MODEL_API_KEY"
+temperature = 0.2
+max_output_tokens = 1024
+timeout_seconds = 180.0
+send_seed = true
+token_limit_parameter = "max_tokens"
+
+[encoder]
+model_name = "BAAI/bge-small-en-v1.5"
+revision = "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+device = "cpu"
+max_sequence_length = 512
+
+[terminal]
+source_ids = ["fix-git"]
+target_ids = ["log-summary-date-ranges", "openssl-selfsigned-cert", "large-scale-text-editing", "sqlite-db-truncate", "regex-log"]
+# Explicit pilot scope: generalization to target tasks conditional on one bank.
+# Use true + sufficient independent provenance groups for source holdouts.
+source_disjoint = false
+checkpoint_steps = 0
+
+[terminal.protocol]
+network = "none"
+verifier_network = "bridge"
+workdir = "/app"
+command_timeout = 60.0
+verifier_timeout = 900.0
+build_timeout = 1200.0
+cpus = 2.0
+memory_mb = 2048
+output_limit = 4000
+success_threshold = 1.0
+require_ctrf = true
+
+[source]
+screening_pairs = 4
+confirmation_pairs = 32
+min_confirmation_pairs = 16
+confidence = 0.95
+acceptance_epsilon = 0.0
+
+[retrieval]
+# No unvalidated similarity cutoff. Fixed full-bank top-1; v/rho/e are separate.
+
+[experiment]
+split_seed = 64
+
+[training]
+hidden_size = 16
+epochs = 300
+learning_rate = 0.01
+seed = 42

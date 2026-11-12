@@ -1,0 +1,25 @@
+# Development values. Not preregistered scientific thresholds.
+[study]
+study_id = "factorial-development"
+base_seed = 42
+replicates = 2
+max_steps = 6
+max_model_calls = 7
+budget_mode = "continuation"
+lambda_inference = 0.01
+lambda_tool = 0.0
+risk_budget = 0.05
+compute_budget = 2.0
+kl_weight = 0.01
+reminder_probability = 0.5
+
+[experiment]
+groups = 30
+split_seed = 64
+
+[training]
+hidden_size = 16
+epochs = 300
+learning_rate = 0.01
+seed = 42
+

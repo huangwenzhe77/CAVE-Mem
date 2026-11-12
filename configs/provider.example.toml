@@ -1,0 +1,32 @@
+# Copy this template and choose a real model/configuration before an API run.
+# No key value belongs in this file. Set OPENAI_API_KEY in the process environment.
+# An explicit --allow-api or --real-actor flag is required by supplied entrypoints.
+[study]
+study_id = "alfworld-single-pilot"
+base_seed = 42
+replicates = 1
+max_steps = 30
+max_model_calls = 30
+budget_mode = "continuation"
+reminder_probability = 0.5
+lambda_inference = 0.01
+lambda_tool = 0.0
+# Calls are the declared development cost unit. Do not label them currency.
+inference_weights = { model_calls = 1.0 }
+tool_weights = { tool_calls = 1.0 }
+
+[provider]
+model = "YOUR_MODEL_ID"
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+temperature = 0.0
+max_output_tokens = 256
+timeout_seconds = 60.0
+send_seed = false
+# Match the model/endpoint API; allowed: max_tokens, max_completion_tokens.
+token_limit_parameter = "max_tokens"
+# Optional measured-price conversion. Missing prices retain api_cost=null.
+# input_price_per_million = 1.0
+# output_price_per_million = 2.0
+# cached_input_price_per_million = 0.5
+# Prices above are illustrative placeholders, never a statement of model pricing.
