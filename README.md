@@ -83,6 +83,8 @@ vllm serve Qwen/Qwen2.5-7B-Instruct \
 
 实验进程设置同名环境变量；远程服务修改配置的 `base_url`。密钥不写入配置。显存需求随精度和上下文变化，7B BF16建议从24 GiB级GPU评估；量化模型需登记为不同actor。输出上限及预算应提前固定；保存权重、镜像及Python/Docker/vLLM版本。seed请求不代表服务保证确定性。
 
+使用 GPT-5.6 Terra 网关做替代 actor pilot 时，先复制 [环境变量模板](configs/gpt-5.6-terra.env.example) 到被忽略的 `configs/gpt-5.6-terra.env`，只在副本中填 Key，并在运行终端执行 `source configs/gpt-5.6-terra.env`。再将 [Terra pilot 配置](configs/terminal-gpt-5.6-terra-pilot.toml) 复制为 `configs/my-terminal.toml`，以下命令继续使用该路径。该配置让同一模型执行来源与目标轨迹；当前没有独立的教师模型自动生成修正记忆，`candidates.json` 仍须人工审核。项目 TOML 使用网关的 `/v1` API 路径，环境变量模板保留用户提供的网关根地址；首次运行前需用自己的 Key 确认模型别名及 Chat Completions 参数兼容性。
+
 ### 2. 固定资产并诊断恢复
 
 下面以pilot为例。正式研究复制另一份配置并扩充任务，随后以新的 `runs/tb-study` 路径重新执行准备、审核和来源构建。

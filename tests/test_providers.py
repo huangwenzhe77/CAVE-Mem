@@ -55,6 +55,18 @@ class ProviderTests(unittest.TestCase):
         self.assertIn("max_completion_tokens", payloads[0])
         self.assertNotIn("max_tokens", payloads[0])
 
+    def test_reasoning_model_request_omits_temperature(self):
+        payloads = []
+        def transport(payload):
+            payloads.append(payload)
+            return {"choices": [{"message": {"content": '{"type":"finish"}'}}]}
+        provider = OpenAICompatibleProvider(OpenAIConfig("gpt-5.6-terra", send_temperature=False,
+            token_limit_parameter="max_completion_tokens"), transport=transport)
+        provider.generate(list(render_messages(self.context())), stage="pilot", seed=1)
+        self.assertNotIn("temperature", payloads[0])
+        self.assertEqual(payloads[0]["max_completion_tokens"], 512)
+        self.assertNotIn("seed", payloads[0])
+
     def test_alfworld_adapter_preserves_one_command(self):
         self.assertEqual(parse_alfworld_action("Action: put apple 1 in/on fridge 1")["text"], "move apple 1 to fridge 1")
         with self.assertRaises(ValueError):

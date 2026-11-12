@@ -91,12 +91,15 @@ class OpenAIConfig:
     output_price_per_million: float | None = None
     cached_input_price_per_million: float | None = None
     token_limit_parameter: str = "max_tokens"
+    send_temperature: bool = True
 
     def __post_init__(self) -> None:
         if not self.model or not self.base_url.startswith(("http://", "https://")):
             raise ValueError("model and HTTP(S) base URL are required")
         if self.token_limit_parameter not in ("max_tokens", "max_completion_tokens"):
             raise ValueError("unsupported token limit parameter")
+        if type(self.send_temperature) is not bool:
+            raise ValueError("send_temperature must be boolean")
         if type(self.max_output_tokens) is not int or self.max_output_tokens < 1:
             raise ValueError("max_output_tokens must be a positive integer")
         finite(self.temperature, "temperature", minimum=0)
@@ -161,8 +164,9 @@ class OpenAICompatibleProvider:
         if not messages or any(set(m) != {"role", "content"} or not isinstance(m["content"], str) for m in messages):
             raise ValueError("messages must contain role/content strings")
         payload = {"model": self.config.model, "messages": copy.deepcopy(messages),
-                   "temperature": self.config.temperature,
                    self.config.token_limit_parameter: self.config.max_output_tokens}
+        if self.config.send_temperature:
+            payload["temperature"] = self.config.temperature
         if self.config.send_seed:
             payload["seed"] = seed
         requested = {k: v for k, v in payload.items() if k != "messages"}

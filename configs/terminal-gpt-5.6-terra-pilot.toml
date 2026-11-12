@@ -1,0 +1,75 @@
+# Terminal-Bench pilot using GPT-5.6 Terra as the task actor in both source and
+# target trajectories. This is not a separate teacher-model workflow.
+# The six tasks are exploratory candidates and cannot fill five training splits.
+[study]
+study_id = "terminal-bench-2-fs-terra-pilot-v1"
+base_seed = 42
+replicates = 2
+max_steps = 30
+max_model_calls = 30
+budget_mode = "continuation"
+reminder_probability = 0.5
+lambda_inference = 0.01
+lambda_tool = 0.0
+inference_weights = { model_calls = 1.0 }
+tool_weights = { tool_calls = 1.0 }
+risk_budget = 0.05
+compute_budget = 2.0
+kl_weight = 0.01
+
+[provider]
+model = "gpt-5.6-terra"
+# The gateway's unauthenticated /v1/models route requires authentication;
+# /models at the root returns 404. Confirm chat/completions with your key.
+base_url = "https://api.aicodemirror.ai/v1"
+api_key_env = "OPENAI_API_KEY"
+temperature = 0.0
+send_temperature = false
+max_output_tokens = 8192
+timeout_seconds = 180.0
+send_seed = false
+token_limit_parameter = "max_completion_tokens"
+
+[encoder]
+model_name = "BAAI/bge-small-en-v1.5"
+revision = "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+device = "cpu"
+max_sequence_length = 512
+
+[terminal]
+source_ids = ["fix-git"]
+target_ids = ["log-summary-date-ranges", "openssl-selfsigned-cert", "large-scale-text-editing", "sqlite-db-truncate", "regex-log"]
+source_disjoint = false
+checkpoint_steps = 0
+
+[terminal.protocol]
+network = "none"
+verifier_network = "bridge"
+workdir = "/app"
+command_timeout = 60.0
+verifier_timeout = 900.0
+build_timeout = 1200.0
+cpus = 2.0
+memory_mb = 2048
+output_limit = 4000
+success_threshold = 1.0
+require_ctrf = true
+
+[source]
+screening_pairs = 4
+confirmation_pairs = 32
+min_confirmation_pairs = 16
+confidence = 0.95
+acceptance_epsilon = 0.0
+
+[retrieval]
+# Fixed full-bank top-1; v/rho/e are separate checks.
+
+[experiment]
+split_seed = 64
+
+[training]
+hidden_size = 16
+epochs = 300
+learning_rate = 0.01
+seed = 42

@@ -9,4 +9,5 @@ models/
 .cache/
 requirements-verified.txt
 configs/my-terminal.toml
+configs/gpt-5.6-terra.env
 
